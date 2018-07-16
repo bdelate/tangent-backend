@@ -2,7 +2,7 @@ from employees import models as employee_models
 from rest_framework import serializers
 
 
-class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+class ManagerSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='employees:employee-detail'
     )
@@ -68,3 +68,15 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
 
         instance.save()
         return instance
+
+
+class EmployeeSerializer(ManagerSerializer):
+    """Employees inherit from Managers but cannot edit all fields"""
+    class Meta(ManagerSerializer.Meta):
+        read_only_fields = (
+            'rank',
+            'salary',
+            'is_active',
+            'is_staff',
+            'is_superuser'
+        )
