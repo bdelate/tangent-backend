@@ -24,3 +24,38 @@ class CanList(permissions.BasePermission):
         if view.action == 'list':
             return request.user.rank == 'Management' or request.user.is_superuser
         return True
+
+
+class IsOwnerOrManager(permissions.BasePermission):
+    """
+    Checks if the user is allowed to access a specific employee instance
+    """
+
+    def has_permission(self, request, view) -> bool:
+        """
+        Users must be authenticated to access a specific employee instance
+
+        Args:
+            request: request object
+            view: view from which the permission is being checked
+
+        Returns:
+            A boolean indicating if the user is authenticated
+        """
+        return request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj) -> bool:
+        """
+        To access an employee instance, the user must be one of:
+        owner, manager, super user
+
+        Args:
+            request: request object
+            view: view from which the permission is being checked
+
+        Returns:
+            A boolean indicating if the user can access the employee instance
+        """
+        return (obj == request.user
+                or request.user.rank == 'Management'
+                or request.user.is_superuser)
