@@ -1,53 +1,46 @@
 from rest_framework import permissions
 
 
-class CanList(permissions.BasePermission):
+class CanListCreateDelete(permissions.BasePermission):
     """
-    Checks if the user is allowed to request a list of employees
+    Managers have full permissions. Non managers are not allowed to
+    list, create or delete employees.
     """
 
     def has_permission(self, request, view) -> bool:
         """
-        If the user is authenticated and is either a manager or superuser,
-        then they are allowed to request a list of all employees
+        The user has permission if they are authenticated and are either
+        a Manager or the action is not one of list, create, destroy
 
         Args:
             request: request object
             view: view from which the permission is being checked
 
         Returns:
-            A boolean granting / denying permission to list all employees
+            A boolean indicating if the user has permission
         """
         if not request.user.is_authenticated:
             return False
 
-        if view.action == 'list':
-            return request.user.rank == 'Management' or request.user.is_superuser
+        if request.user.rank == 'Management':
+            return True
+
+        if view.action in ['list', 'create', 'destroy']:
+            return False
+
         return True
 
 
 class IsOwnerOrManager(permissions.BasePermission):
     """
-    Checks if the user is allowed to access a specific employee instance
+    Managers have full permissions. Non managers are only allowed to
+    access and update their own employee instance
     """
-
-    def has_permission(self, request, view) -> bool:
-        """
-        Users must be authenticated to access a specific employee instance
-
-        Args:
-            request: request object
-            view: view from which the permission is being checked
-
-        Returns:
-            A boolean indicating if the user is authenticated
-        """
-        return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj) -> bool:
         """
-        To access an employee instance, the user must be one of:
-        owner, manager, super user
+        Check that the user is a manager or is accessing their own
+        employee instance.
 
         Args:
             request: request object

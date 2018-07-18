@@ -11,10 +11,35 @@ from rest_framework.decorators import list_route
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-    """Allows for employee CRUD operations"""
+    """
+    Allows for employee CRUD operations
+
+    list:
+    List all employees. Only available to managers.
+
+    create:
+    Create a new employee. Only available to managers.
+
+    current_employee:
+    Retrieve the employee instance for the currently logged in user.
+
+    read:
+    Retrieves the employee instance for the specified employee by id.
+
+    update:
+    Update an employee instance. All fields are required. Non managers can
+    only update their own instance.
+
+    partial_update:
+    Update only the specified employee instance fields. Non managers can
+    only partially update their own instance.
+
+    delete:
+    Delete an employee instance. Only available to managers.
+    """
     queryset = employee_models.Employee.objects.all()
     permission_classes = (
-        employee_permissions.CanList,
+        employee_permissions.CanListCreateDelete,
         employee_permissions.IsOwnerOrManager
     )
 
@@ -26,7 +51,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             ModelSerializer
         """
         if self.request.user.rank == 'Management':
-            return employee_serializers.ManagerSerializer
+            return employee_serializers.EmployeeSerializer
         return employee_serializers.EmployeeSerializer
 
     @list_route(
