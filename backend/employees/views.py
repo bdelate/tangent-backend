@@ -51,7 +51,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             ModelSerializer
         """
         if self.request.user.rank == 'Management':
-            return employee_serializers.EmployeeSerializer
+            return employee_serializers.ManagerSerializer
         return employee_serializers.EmployeeSerializer
 
     @list_route(
