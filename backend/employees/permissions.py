@@ -56,6 +56,4 @@ class IsOwnerOrManager(permissions.BasePermission):
         Returns:
             A boolean indicating if the user can access the employee instance
         """
-        return (obj == request.user
-                or request.user.rank == 'Management'
-                or request.user.is_superuser)
+        return obj == request.user or request.user.rank == 'Management'
