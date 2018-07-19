@@ -20,6 +20,8 @@ The application can be interacted with in the following ways:
 * Via the browseable API: http://127.0.0.1:8000/api/
 * Via the documentation: http://127.0.0.1:8000/
 
+When viewing the documentation, both session and JWT token authentication are available. Only session authentication is applicable for the browseable api.
+
 # Running tests
 
 ```
